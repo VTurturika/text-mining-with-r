@@ -1,5 +1,6 @@
 .Rproj.user/
 .RHistory
+.RData
 *.Rproj
 
 data/*.txt

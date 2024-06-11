@@ -3,7 +3,7 @@ library(rvest)
 base_url <- "https://phm.cuspu.edu.ua/"
 base_news_url <- "https://phm.cuspu.edu.ua/facultet/novini.html"
 query_param <- "start"
-num_pages <- 10
+num_pages <- 20
 step <- 20
 file_path <- "article_links.txt"
 file_conn <- file(file_path, "w")

@@ -3,5 +3,4 @@
 .RData
 *.Rproj
 
-data/*.txt
-data/*.csv
+Thumbs.db

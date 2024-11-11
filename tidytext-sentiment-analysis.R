@@ -2,6 +2,10 @@
 library(tidyverse)
 library(tidytext)
 
+prefix <- "radiosvoboda_" # "suspilne_"
+input_file <- paste0(prefix, "article_texts.csv")
+results_folder <- "results_sentiment-analysis"
+
 # Source the Ukrainian stemmer script
 source("ukrainian_stemmer.R")
 
@@ -9,7 +13,7 @@ source("ukrainian_stemmer.R")
 custom_lexicon <- read.csv("sentiment_ua.csv", sep = ";", stringsAsFactors = FALSE)
 
 # Read the text data file
-text_data <- read.csv("article_texts.csv", stringsAsFactors = FALSE)
+text_data <- read.csv(input_file, stringsAsFactors = FALSE)
 
 # Inspect the data
 print(head(custom_lexicon))
@@ -48,17 +52,19 @@ sentiment_summary <- sentiment_data %>%
   spread(sentiment, n, fill = 0) %>%
   mutate(sentiment_score = positive - negative)
 
-# Merge sentiment scores with original data
 results <- text_data %>%
-  select(document, text) %>%
-  distinct(document, text) %>%
+  select(document, title) %>%
+  distinct(document, title) %>%
   left_join(sentiment_summary, by = "document") %>%
-  filter(!is.na(sentiment_score))  # Filter rows with NA scores
+  filter(!is.na(sentiment_score)) %>%
+  select(title, negative, positive, sentiment_score)  # Only keep required columns
 
 # Create results directory if it doesn't exist
-if (!dir.exists("results")) {
-  dir.create("results")
+if (!dir.exists(results_folder)) {
+  dir.create(results_folder)
 }
 
+output_file <- paste0(results_folder, "/tidytext-sentiment-analysis_", prefix, ".csv")
+
 # Save the results to a CSV file with the updated name
-write.csv(results, "results/tidytext-sentiment-analysis.csv", row.names = FALSE)
+write.csv(results, output_file, row.names = FALSE)

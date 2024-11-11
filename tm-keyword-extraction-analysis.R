@@ -6,10 +6,12 @@ library(lubridate)
 library(ggplot2)
 
 # Define file paths
-file_path <- "article_texts.csv"
+prefix <- "radiosvoboda_" # "suspilne_" 
+file_path <- paste0(prefix, "article_texts.csv")
+results_folder <- "results_keyword_extractions"
 stopwords_file <- "stopwords_ua.txt"
 stemmer_file <- "ukrainian_stemmer.R"
-output_prefix <- "results/tm_keyword_extractions"
+output_prefix <- paste0(results_folder, "/tm_keyword_extractions_", prefix)
 
 # Read data from CSV file
 data <- read.csv(file_path, stringsAsFactors = FALSE)
@@ -76,8 +78,8 @@ process_yearly_corpus <- function(yearly_data) {
 }
 
 # Create results directory if it doesn't exist
-if (!dir.exists("results")) {
-  dir.create("results")
+if (!dir.exists(results_folder)) {
+  dir.create(results_folder)
 }
 
 # Function to create and save a bar chart
@@ -102,7 +104,7 @@ all_data_df <- data.frame(
   Term = names(all_data_keywords),
   Score = all_data_keywords
 )
-write.csv(all_data_df, file = paste0(output_prefix, "_all_data.csv"), row.names = FALSE)
+write.csv(all_data_df, file = paste0(output_prefix, "all_data.csv"), row.names = FALSE)
 cat("Top 50 keywords for all data:\n")
 print(all_data_keywords)
 cat("\n")

@@ -7,8 +7,12 @@ library(ggplot2)
 # Source the Ukrainian stemmer
 source("ukrainian_stemmer.R")
 
+results_folder <- "results-word_frequencies"
+prefix <- "radiosvoboda_" # "suspilne_"
+input_file <- paste0(prefix, "article_texts.csv")
+
 # Read the CSV file
-text_data <- read.csv("article_texts.csv", stringsAsFactors = FALSE)
+text_data <- read.csv(input_file, stringsAsFactors = FALSE)
 
 # Extract the text and date_published columns
 texts <- text_data$text
@@ -36,8 +40,8 @@ text_df <- text_df %>%
   mutate(text = sapply(text, preprocess_text))
 
 # Ensure the results folder exists
-if (!dir.exists("results")) {
-  dir.create("results")
+if (!dir.exists(results_folder)) {
+  dir.create(results_folder)
 }
 
 # Function to process text for a specific dataset (either overall or per year)
@@ -54,7 +58,7 @@ process_data <- function(data, identifier) {
   word_freq_df <- data.frame(word = names(word_freqs), freq = word_freqs)
   
   # Save the word frequencies to a CSV file
-  csv_file <- paste0("results/tm_word_frequencies_", identifier, ".csv")
+  csv_file <- paste0(results_folder, "/", prefix, "tm_word_frequencies_", identifier, ".csv")
   write.csv(word_freq_df, csv_file, row.names = FALSE)
   
   # Select the top 10 words
@@ -71,7 +75,7 @@ process_data <- function(data, identifier) {
     theme(axis.text.x = element_text(angle = 45, hjust = 1))
   
   # Save the plot as a JPG file
-  jpg_file <- paste0("results/tm_top_10_word_frequencies_", identifier, ".jpg")
+  jpg_file <- paste0(results_folder, "/", prefix, "tm_top_10_word_frequencies_", identifier, ".jpg")
   ggsave(jpg_file, plot = p, width = 10, height = 8)
 }
 
